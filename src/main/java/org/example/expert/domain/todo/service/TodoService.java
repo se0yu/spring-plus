@@ -17,14 +17,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
+
+// 클래스의 @Transactional 이 readOnly로 선언되어 있어 모든 메서드가 읽기 전용이 됨 -> post 요청에서 오류 발생
+// 개별 메서드로 지정해줌(get 요청만 readOnly 선언)
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class TodoService {
 
     private final TodoRepository todoRepository;
     private final WeatherClient weatherClient;
 
+    @Transactional
     public TodoSaveResponse saveTodo(AuthUser authUser, TodoSaveRequest todoSaveRequest) {
         User user = User.fromAuthUser(authUser);
 
@@ -46,7 +52,7 @@ public class TodoService {
                 new UserResponse(user.getId(), user.getEmail())
         );
     }
-
+    @Transactional(readOnly = true)
     public Page<TodoResponse> getTodos(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
 
@@ -63,6 +69,7 @@ public class TodoService {
         ));
     }
 
+    @Transactional(readOnly = true)
     public TodoResponse getTodo(long todoId) {
         Todo todo = todoRepository.findByIdWithUser(todoId)
                 .orElseThrow(() -> new InvalidRequestException("Todo not found"));
