@@ -33,8 +33,11 @@ public class JwtUtil {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
     }
-
-    public String createToken(Long userId, String email, UserRole userRole) {
+    // 1. User Entity에 nickname 추가
+    // 2. 회원가입 request에 nickname 추가
+    // 3. 토큰 생성 메서드에 nickname 추가
+    // 4. 토큰 생성시 사용되는 User 생성자에 nickname 추가
+    public String createToken(Long userId, String email, UserRole userRole, String nickname) {
         Date date = new Date();
 
         return BEARER_PREFIX +
@@ -42,6 +45,7 @@ public class JwtUtil {
                         .setSubject(String.valueOf(userId))
                         .claim("email", email)
                         .claim("userRole", userRole)
+                        .claim("nickname", nickname)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date) // 발급일
                         .signWith(key, signatureAlgorithm) // 암호화 알고리즘
