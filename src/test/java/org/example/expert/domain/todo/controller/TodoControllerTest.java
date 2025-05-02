@@ -67,11 +67,14 @@ class TodoControllerTest {
         when(todoService.getTodo(todoId))
                 .thenThrow(new InvalidRequestException("Todo not found"));
 
+        // 예외가 발생한 케이스의 테스트 코드인데 기대되는 상태 코드가 OK(200)이었음.
+        // 실제로는 BAD_REQUEST(400)이 출력됨
+        // 해당 코드를 실행했을 때 발생하는 에러에 맞춰 테스트 코드 수정
         // then
         mockMvc.perform(get("/todos/{todoId}", todoId))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value(HttpStatus.OK.name()))
-                .andExpect(jsonPath("$.code").value(HttpStatus.OK.value()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(HttpStatus.BAD_REQUEST.name()))
+                .andExpect(jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
                 .andExpect(jsonPath("$.message").value("Todo not found"));
     }
 }
