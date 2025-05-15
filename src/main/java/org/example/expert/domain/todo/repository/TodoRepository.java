@@ -10,15 +10,15 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public interface TodoRepository extends JpaRepository<Todo, Long> {
+public interface TodoRepository extends JpaRepository<Todo, Long>, TodoCustomRepository {
 
     @Query("SELECT t FROM Todo t LEFT JOIN FETCH t.user u ORDER BY t.modifiedAt DESC")
     Page<Todo> findAllByOrderByModifiedAtDesc(Pageable pageable);
-
-    @Query("SELECT t FROM Todo t " +
-            "LEFT JOIN t.user " +
-            "WHERE t.id = :todoId")
-    Optional<Todo> findByIdWithUser(@Param("todoId") Long todoId);
+// 이전 메서드 주석처리
+//    @Query("SELECT t FROM Todo t " +
+//            "LEFT JOIN t.user " +
+//            "WHERE t.id = :todoId")
+//    Optional<Todo> findByIdWithUser(@Param("todoId") Long todoId);
 
     //1. RequestParam 에 조회에 사용할 날씨, 검색 날짜(시작일,종료일) 추가
     //2. TodoService 메서드에 매개변수 추가
